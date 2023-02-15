@@ -8,43 +8,105 @@ library(tidyverse)
 library(usethis)
 library(gh)
 library(glue)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = FALSE,
+                      collapse = TRUE)
+```
+
+### Git workflow for issue/feature
+
+Assume the following repository for Git/GH workflow: <https://github.com/MayaGans/ghapitest>
+
+1.  New issue/feature is created (`add README #1`)\
+
+2.  Create branch for feature/issue (`fix-01`)
+
+    ``` bash
+    git checkout -b fix-01
+    ```
+
+3.  Fix issue/implement feature (add, commit message `closes #1`)
+
+    ``` bash
+    git add . 
+    git commit -m "closes #1"
+    git push --set-upstream origin fix-01
+    ```
+
+4.  Submit PR for `#01`
+
+    -   <https://github.com/MayaGans/ghapitest/issues/1>
+
+5.  Request review for `#01`
+
+6.  Comment and mark `#01` as reviewed
+
+    -   Creates `#02`: <https://github.com/MayaGans/ghapitest/pull/2>
+
+7.  "Merge pull request `#2` from `MayaGans/fix-01` closes `#01`"
+
+    -   [`fd2f3da`](https://github.com/MayaGans/ghapitest/commit/fd2f3daed49f0ee245cc3aae26a05b60b79c1215)
+
+> `#01` is closed, but not tested (or associated with any tests), so if we want to include a link to the *test* that's associated with an issue/feature, we create another issue (`#03`)
+
+8.  Create branch to test `#01` (maybe `test-fix-01`?)
+
+9.  Write/run test for issue/feature (`#01`)
+
+10. Create pull request that closes issue `#3` (new branch name?)
+
+11. Request review for `#03`...
+
+12. Comment and mark `#03` as reviewed...
+
+13. "Merge pull request `#4` from `MayaGans/<test-fix-01>` closes `#03`"
+
+------------------------------------------------------------------------
+
+### Traceability matrix:
+
+| issue/feature | issue/feature completed by | system test | test completed by | pass/fail |
+|----------|--------------------|----------|-----------------------|----------|
+|               |                            |             |                   |           |
+|               |                            |             |                   |           |
+|               |                            |             |                   |           |
+
+
+## Querying GitHub
+
+The `gh` package will give us commits
+
+```{r , eval=TRUE}
+# this gives all commits in main only
+rpo_commits <- gh("/repos/{owner}/{repo}/commits", 
+   owner = "MayaGans", 
+   repo = "ghapitest")
+head(rpo_commits)
+```
+
+And comments
+
+```{r , eval=TRUE}
+# this returns comments (in GH) on PR
+rpo_comments <- gh("/repos/{owner}/{repo}/pulls/comments", 
+   owner = "MayaGans", 
+   repo = "ghapitest")
+head(rpo_comments)
 ```
 
 
-```{r}
+## Examples of the `gh` package:
+
+```{r gh-testing}
 repos <- gh("GET /orgs/{org}/repos", org = "r-lib")
 vapply(repos, "[[", "", "name")
+gh("/users/{username}/repos/{repo}",
+   username = "hadley",
+   repo = "adv-r")
+gh("/users/{username}/repos/{repo}",
+   username = "hadley",
+   repo = "adv-r")
+gh("/repos/{owner}/{repo}/comments",
+   owner = "hadley",
+   repo = "adv-r")
 ```
-
-https://github.com/hadley/adv-r
-
-https://github.com/MayaGans/ghapi-test
-
-```{r}
-# gh("/users/{username}/repos/{repo}", username = "hadley", repo = "adv-r")
-# gh("/users/{username}/repos/{repo}", username = "hadley", repo = "adv-r")
-# gh("/repos/{owner}/{repo}/comments", owner = "hadley", repo = "adv-r")
-# this gives all commits in main only
-gh("/repos/{owner}/{repo}/commits", owner = "MayaGans", repo = "ghapitest")
-```
-
-```{r}
-# this returns comments (in GH) on PR
-gh("/repos/{owner}/{repo}/pulls/comments", owner = "MayaGans", repo = "ghapitest")
-```
-
-Steps 
-
-1. Create branch for feature/issue
-2. Fix issue/implement feature (add, commit message includes?)
-3. Submit PR with `#01` 
-4. Review + comment PR with 
-5. Create pull request that closes issue #3 (in new branch)
-6. 
-
-Traceability matrix: 
-
-1. issues 
-2. PR that closes the issue
-3. 

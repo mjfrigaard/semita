@@ -1,0 +1,50 @@
+---
+title: "README"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(usethis)
+library(gh)
+library(glue)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+repos <- gh("GET /orgs/{org}/repos", org = "r-lib")
+vapply(repos, "[[", "", "name")
+```
+
+https://github.com/hadley/adv-r
+
+https://github.com/MayaGans/ghapi-test
+
+```{r}
+# gh("/users/{username}/repos/{repo}", username = "hadley", repo = "adv-r")
+# gh("/users/{username}/repos/{repo}", username = "hadley", repo = "adv-r")
+# gh("/repos/{owner}/{repo}/comments", owner = "hadley", repo = "adv-r")
+# this gives all commits in main only
+gh("/repos/{owner}/{repo}/commits", owner = "MayaGans", repo = "ghapitest")
+```
+
+```{r}
+# this returns comments (in GH) on PR
+gh("/repos/{owner}/{repo}/pulls/comments", owner = "MayaGans", repo = "ghapitest")
+```
+
+Steps 
+
+1. Create branch for feature/issue
+2. Fix issue/implement feature (add, commit message includes?)
+3. Submit PR with `#01` 
+4. Review + comment PR with 
+5. Create pull request that closes issue #3 (in new branch)
+6. 
+
+Traceability matrix: 
+
+1. issues 
+2. PR that closes the issue
+3. 
